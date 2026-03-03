@@ -1,0 +1,538 @@
+/* ============================================================
+   AI Invitation Generator - Theme System
+   ============================================================
+   Change these CSS variables to restyle the entire invitation.
+   All colors, fonts, spacing, borders, and shadows are controlled here.
+   ============================================================ */
+
+:root {
+  /* ---- Primary & Secondary Colors ---- */
+  --primary-color: #b8860b;
+  --primary-light: #d4a843;
+  --primary-dark: #8b6914;
+  --primary-50: #fdf8ef;
+
+  --secondary-color: #c2185b;
+  --secondary-light: #e91e63;
+  --secondary-dark: #880e4f;
+
+  /* ---- Background Colors ---- */
+  --bg-cream: #faf7f2;
+  --bg-cream-dark: #f0ebe3;
+  --bg-gradient-start: #faf7f2;
+  --bg-gradient-mid: #fdf2f8;
+  --bg-gradient-end: #fef3c7;
+
+  /* ---- Text Colors ---- */
+  --text-heading: #1f2937;
+  --text-body: #4b5563;
+  --text-muted: #9ca3af;
+  --text-light: #d1d5db;
+
+  /* ---- Fonts ---- */
+  --font-script: 'Great Vibes', cursive;
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-arabic: 'Amiri', serif;
+
+  /* ---- Font Sizes (invitation view) ---- */
+  --hero-name-size: clamp(3rem, 8vw, 6rem);
+  --section-title-size: clamp(1.5rem, 4vw, 2.25rem);
+  --body-text-size: 0.9375rem;
+  --label-size: 0.6875rem;
+
+  /* ---- Spacing ---- */
+  --section-padding-y: 5rem;
+  --section-padding-x: 1.5rem;
+  --card-padding: 1.5rem;
+  --gap-sm: 0.5rem;
+  --gap-md: 1rem;
+  --gap-lg: 1.5rem;
+  --gap-xl: 2.5rem;
+
+  /* ---- Border ---- */
+  --border-radius-sm: 0.5rem;
+  --border-radius-md: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  --border-radius-full: 9999px;
+  --border-color: rgba(184, 134, 11, 0.08);
+  --border-color-input: #e5e2dc;
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.02);
+  --shadow-md: 0 4px 24px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.02);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.03);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.1);
+  --shadow-primary: 0 4px 12px rgba(184, 134, 11, 0.25);
+
+  /* ---- Transitions ---- */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* ---- Glass Effect ---- */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-blur: blur(20px);
+
+  /* ---- Ornament Pattern ---- */
+  --pattern-color: rgba(184, 134, 11, 0.04);
+  --pattern-size: 32px;
+  --ornament-opacity: 0.08;
+
+  /* ---- Photo Frame ---- */
+  --groom-frame-gradient: linear-gradient(135deg, var(--primary-light), var(--primary-color), var(--primary-light));
+  --bride-frame-gradient: linear-gradient(135deg, #f9a8d4, var(--secondary-color), #f9a8d4);
+  --photo-frame-size: 14rem;
+
+  /* ---- Countdown ---- */
+  --countdown-bg: rgba(255, 255, 255, 0.9);
+  --countdown-number-color: var(--primary-color);
+}
+
+/* ============================================================
+   Base Styles
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-body);
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+/* ============================================================
+   Background Variants
+   ============================================================ */
+.gradient-bg {
+  background: linear-gradient(160deg,
+    var(--bg-gradient-start) 0%,
+    var(--bg-gradient-mid) 40%,
+    var(--bg-gradient-end) 70%,
+    var(--bg-gradient-start) 100%
+  );
+  background-attachment: fixed;
+}
+
+.invitation-bg {
+  background: linear-gradient(180deg,
+    var(--bg-cream) 0%,
+    #fff7ed 30%,
+    var(--bg-gradient-mid) 60%,
+    var(--bg-cream) 100%
+  );
+}
+
+/* ============================================================
+   Dot Pattern Overlay
+   ============================================================ */
+.pattern-overlay { position: relative; }
+.pattern-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--pattern-color) 1px, transparent 0);
+  background-size: var(--pattern-size) var(--pattern-size);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================================
+   Glass Card
+   ============================================================ */
+.card-elevated {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  transition: box-shadow var(--transition-normal);
+}
+.card-elevated:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================
+   Form Inputs
+   ============================================================ */
+.form-input {
+  transition: all var(--transition-fast);
+  border: 1.5px solid var(--border-color-input);
+  background: #fff;
+  font-family: var(--font-body);
+  font-size: var(--body-text-size);
+}
+.form-input:hover { border-color: var(--primary-light); }
+.form-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.1);
+  outline: none;
+}
+.form-input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* ============================================================
+   Content Editable Highlights
+   ============================================================ */
+[contenteditable="true"]:hover {
+  outline: 2px dashed rgba(184, 134, 11, 0.35);
+  outline-offset: 4px;
+  cursor: text;
+  border-radius: 4px;
+}
+[contenteditable="true"]:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   Visibility
+   ============================================================ */
+.hidden-section { display: none !important; }
+.active-section { display: block; }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: #fff;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-primary);
+}
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(184, 134, 11, 0.35);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 12px rgba(194, 24, 91, 0.2);
+}
+
+.btn-outline {
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+.btn-outline:hover {
+  background: rgba(184, 134, 11, 0.05);
+}
+
+/* ============================================================
+   Ornamental Divider
+   ============================================================ */
+.ornament-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.ornament-divider::before,
+.ornament-divider::after {
+  content: '';
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+}
+
+/* ============================================================
+   Photo Frame
+   ============================================================ */
+.photo-frame {
+  position: relative;
+  border-radius: var(--border-radius-full);
+  padding: 6px;
+  background: var(--groom-frame-gradient);
+  width: var(--photo-frame-size);
+  height: var(--photo-frame-size);
+}
+.photo-frame.bride {
+  background: var(--bride-frame-gradient);
+}
+.photo-frame-inner {
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #fef3c7, #fdf2f8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-frame-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================================
+   Countdown
+   ============================================================ */
+.countdown-item {
+  background: var(--countdown-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(184, 134, 11, 0.12);
+}
+.countdown-item .number {
+  color: var(--countdown-number-color);
+  font-family: var(--font-heading);
+}
+
+/* ============================================================
+   Variation Card
+   ============================================================ */
+.variation-card {
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+.variation-card:hover { transform: translateY(-2px); }
+.variation-card.selected {
+  border-color: var(--primary-color) !important;
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.04), rgba(184, 134, 11, 0.08));
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.12);
+}
+
+/* ============================================================
+   Step Connector
+   ============================================================ */
+.step-connector {
+  width: 60px;
+  height: 2px;
+  background: var(--border-color-input);
+  position: relative;
+  overflow: hidden;
+}
+.step-connector.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--primary-color);
+}
+
+/* ============================================================
+   Toast
+   ============================================================ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  padding: 12px 20px;
+  border-radius: var(--border-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background: #1f2937;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.3s ease-out;
+}
+.toast.toast-exit {
+  animation: fadeOutDown 0.3s ease-out forwards;
+}
+
+/* ============================================================
+   Gallery
+   ============================================================ */
+.gallery-cell {
+  aspect-ratio: 1;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  position: relative;
+  cursor: pointer;
+  transition: transform var(--transition-normal);
+}
+.gallery-cell:hover { transform: scale(1.02); }
+.gallery-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gallery-cell .upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+.gallery-cell:hover .upload-overlay {
+  opacity: 1;
+}
+
+/* ============================================================
+   Spinner
+   ============================================================ */
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid var(--bg-cream-dark);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ============================================================
+   Decorative Corners
+   ============================================================ */
+.deco-corner-tl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 120px;
+  opacity: var(--ornament-opacity);
+  pointer-events: none;
+}
+.deco-corner-br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 120px;
+  height: 120px;
+  opacity: var(--ornament-opacity);
+  transform: rotate(180deg);
+  pointer-events: none;
+}
+
+/* ============================================================
+   Invitation Section
+   ============================================================ */
+.inv-section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   File Upload Trigger
+   ============================================================ */
+.upload-trigger {
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+.upload-trigger:hover { opacity: 0.8; }
+
+/* Music upload area */
+.music-upload-area {
+  border: 2px dashed var(--border-color-input);
+  border-radius: var(--border-radius-lg);
+  padding: var(--card-padding);
+  text-align: center;
+  transition: border-color var(--transition-fast);
+  cursor: pointer;
+}
+.music-upload-area:hover {
+  border-color: var(--primary-light);
+}
+.music-upload-area.has-file {
+  border-color: var(--primary-color);
+  border-style: solid;
+  background: var(--primary-50);
+}
+
+/* ============================================================
+   Keyframe Animations
+   ============================================================ */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeOutDown {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(30px); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes chevronBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+@keyframes ornamentDrift {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(3deg) scale(1.02); }
+}
+
+.animate-float { animation: float 3.5s ease-in-out infinite; }
+.animate-fade-in-up { animation: fadeInUp 0.7s ease-out both; }
+.animate-fade-in { animation: fadeIn 0.6s ease-out both; }
+.animate-scale-in { animation: scaleIn 0.5s ease-out both; }
+.animate-chevron { animation: chevronBounce 1.5s ease-in-out infinite; }
+.animate-ornament { animation: ornamentDrift 6s ease-in-out infinite; }
+
+/* Stagger delays */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* ============================================================
+   Scroll Reveal
+   ============================================================ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Custom Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 640px) {
+  :root {
+    --section-padding-y: 3.5rem;
+    --photo-frame-size: 11rem;
+  }
+  .deco-corner-tl, .deco-corner-br { width: 80px; height: 80px; }
+}

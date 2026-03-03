@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Invitation Generator</title>
+
+  <!-- External Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind (CDN for prototype) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#b8860b', light: '#d4a843', dark: '#8b6914', 50: '#fdf8ef' },
+            secondary: { DEFAULT: '#c2185b', light: '#e91e8c', dark: '#880e4f' },
+            cream: { DEFAULT: '#faf7f2', dark: '#f0ebe3' },
+          },
+          fontFamily: {
+            script: ['Great Vibes', 'cursive'],
+            elegant: ['Playfair Display', 'serif'],
+            body: ['Inter', 'sans-serif'],
+            arabic: ['Amiri', 'serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Theme (all CSS variables) -->
+  <link rel="stylesheet" href="theme.css"/>
+
+  <!-- Hidden file inputs -->
+  <style>
+    .file-input-hidden { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body class="gradient-bg min-h-screen">
+
+  <!-- Hidden file inputs (image + music uploads) -->
+  <input type="file" id="groomPhotoInput"  accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="bridePhotoInput"  accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="galleryInput0"    accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="galleryInput1"    accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="galleryInput2"    accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="galleryInput3"    accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="galleryInput4"    accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="galleryInput5"    accept="image/*" class="file-input-hidden"/>
+  <input type="file" id="musicFileInput"   accept="audio/*" class="file-input-hidden"/>
+
+
+  <!-- ==================== LANDING PAGE (FORM) ==================== -->
+  <div id="landingPage" class="active-section page-transition">
+
+    <!-- Header -->
+    <header class="py-4 px-6 border-b border-primary/10 bg-white/60 backdrop-blur-lg sticky top-0 z-40">
+      <div class="max-w-5xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-md">
+            <i class="fas fa-envelope-open-text text-white text-sm"></i>
+          </div>
+          <div>
+            <h1 class="text-lg font-bold text-gray-800 font-elegant leading-tight">AI Invitation</h1>
+            <p class="text-[10px] text-primary font-medium tracking-widest uppercase">Generator</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-primary/60">
+          <i class="fas fa-wand-magic-sparkles text-sm"></i>
+          <span class="text-xs font-medium hidden sm:inline">Powered by AI</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Form -->
+    <main class="max-w-3xl mx-auto px-5 py-10 md:py-14">
+
+      <!-- Hero Text -->
+      <div class="text-center mb-10 animate-fade-in-up">
+        <p class="text-primary font-medium tracking-[0.2em] text-xs uppercase mb-3">Create Something Beautiful</p>
+        <h2 class="text-3xl md:text-5xl font-elegant text-gray-800 mb-3 leading-tight">Elegant Invitations,<br class="hidden md:block"/> Crafted by AI</h2>
+        <p class="text-gray-500 text-sm md:text-base max-w-lg mx-auto">Fill in your event details and let our AI generate a personalized, stunning invitation with shareable links for every guest.</p>
+      </div>
+
+      <!-- Progress Steps -->
+      <div class="flex justify-center mb-10 animate-fade-in-up delay-200">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2" id="step1Indicator">
+            <div class="step-circle w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-semibold shadow-md">1</div>
+            <span class="step-label text-sm font-semibold text-primary">Details</span>
+          </div>
+          <div class="step-connector" id="stepConnector"></div>
+          <div class="flex items-center gap-2" id="step2Indicator">
+            <div class="step-circle w-8 h-8 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center text-sm font-semibold">2</div>
+            <span class="step-label text-sm font-medium text-gray-400">Preview</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Step 1: Event Form ===== -->
+      <div id="step1" class="card-elevated rounded-2xl p-6 md:p-8 animate-fade-in-up delay-300">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <i class="fas fa-pen-fancy text-primary text-sm"></i>
+          </div>
+          <h3 class="text-xl font-elegant font-semibold text-gray-800">Event Information</h3>
+        </div>
+
+        <!-- Event Type & Theme -->
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Event Type <span class="text-red-400">*</span></label>
+            <select id="eventType" class="form-input w-full px-4 py-3 rounded-xl text-sm">
+              <option value="Wedding">Wedding</option>
+              <option value="Engagement">Engagement</option>
+              <option value="Birthday">Birthday</option>
+              <option value="Anniversary">Anniversary</option>
+              <option value="Graduation">Graduation</option>
+              <option value="Corporate">Corporate Event</option>
+              <option value="Baby Shower">Baby Shower</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Theme <span class="text-red-400">*</span></label>
+            <select id="theme" class="form-input w-full px-4 py-3 rounded-xl text-sm">
+              <option value="elegant">Elegant</option>
+              <option value="minimalist">Minimalist</option>
+              <option value="modern">Modern</option>
+              <option value="floral">Floral</option>
+              <option value="rustic">Rustic</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Host Names -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Host Names <span class="text-red-400">*</span></label>
+          <input type="text" id="hostNames" placeholder="e.g., John & Jane" class="form-input w-full px-4 py-3 rounded-xl text-sm"/>
+          <p class="text-[11px] text-gray-400 mt-1">Use "&" to separate names for couple events</p>
+        </div>
+
+        <!-- Date & Tone -->
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Date & Time <span class="text-red-400">*</span></label>
+            <input type="datetime-local" id="dateTime" class="form-input w-full px-4 py-3 rounded-xl text-sm"/>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Tone <span class="text-red-400">*</span></label>
+            <select id="tone" class="form-input w-full px-4 py-3 rounded-xl text-sm">
+              <option value="formal">Formal</option>
+              <option value="casual">Casual</option>
+              <option value="poetic">Poetic</option>
+              <option value="elegant">Elegant</option>
+              <option value="romantic">Romantic</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Venue -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Venue Name <span class="text-red-400">*</span></label>
+          <input type="text" id="venueName" placeholder="e.g., Grand Ballroom Hotel" class="form-input w-full px-4 py-3 rounded-xl text-sm"/>
+        </div>
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Venue Address <span class="text-red-400">*</span></label>
+          <textarea id="venueAddress" rows="2" placeholder="Full address of the venue" class="form-input w-full px-4 py-3 rounded-xl text-sm resize-none"></textarea>
+        </div>
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Google Maps Link <span class="text-gray-300">(optional)</span></label>
+          <input type="url" id="mapsLink" placeholder="https://maps.google.com/..." class="form-input w-full px-4 py-3 rounded-xl text-sm"/>
+        </div>
+
+        <!-- Dress Code -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Dress Code <span class="text-red-400">*</span></label>
+          <input type="text" id="dressCode" placeholder="e.g., Formal Attire, Casual Chic, Traditional" class="form-input w-full px-4 py-3 rounded-xl text-sm"/>
+        </div>
+
+        <!-- Language & Music Preset -->
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Language <span class="text-red-400">*</span></label>
+            <select id="language" class="form-input w-full px-4 py-3 rounded-xl text-sm">
+              <option value="en">English</option>
+              <option value="id">Bahasa Indonesia</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Background Music</label>
+            <select id="music" class="form-input w-full px-4 py-3 rounded-xl text-sm">
+              <option value="romantic">Romantic Piano</option>
+              <option value="classical">Classical Orchestra</option>
+              <option value="acoustic">Acoustic Guitar</option>
+              <option value="none">No Music</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Music Upload -->
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Upload Custom Music <span class="text-gray-300">(optional)</span></label>
+          <div id="musicUploadArea" class="music-upload-area" onclick="triggerMusicUpload()">
+            <i class="fas fa-music text-primary/40 text-lg mb-1"></i>
+            <p class="music-filename text-xs text-gray-400">Click to upload MP3, WAV, or OGG (max 15 MB)</p>
+          </div>
+        </div>
+
+        <!-- Couple Photo Upload -->
+        <div class="mb-6">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Couple Photos <span class="text-gray-300">(optional)</span></label>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="text-center">
+              <div onclick="triggerUpload('groomPhotoInput')" class="upload-trigger w-28 h-28 mx-auto rounded-full border-2 border-dashed border-primary/30 flex items-center justify-center bg-primary/5 overflow-hidden" id="groomPhotoPreview">
+                <div class="text-center">
+                  <i class="fas fa-camera text-primary/30 text-lg"></i>
+                  <p class="text-[10px] text-gray-400 mt-1">Groom</p>
+                </div>
+              </div>
+            </div>
+            <div class="text-center">
+              <div onclick="triggerUpload('bridePhotoInput')" class="upload-trigger w-28 h-28 mx-auto rounded-full border-2 border-dashed border-secondary/30 flex items-center justify-center bg-secondary/5 overflow-hidden" id="bridePhotoPreview">
+                <div class="text-center">
+                  <i class="fas fa-camera text-secondary/30 text-lg"></i>
+                  <p class="text-[10px] text-gray-400 mt-1">Bride</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button onclick="generateAIContent()" id="generateBtn" class="btn-primary w-full py-4 rounded-xl flex items-center justify-center gap-2.5 text-sm">
+          <i class="fas fa-wand-magic-sparkles"></i>
+          <span>Generate AI Invitation</span>
+        </button>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="hidden py-10 text-center">
+          <div class="spinner mx-auto mb-4"></div>
+          <p class="text-sm text-gray-500 font-medium">AI is crafting your invitation...</p>
+          <p class="text-xs text-gray-400 mt-1">This may take a moment</p>
+        </div>
+
+        <!-- Validation Error -->
+        <div id="validationError" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 flex items-start gap-2">
+          <i class="fas fa-circle-exclamation mt-0.5 flex-shrink-0"></i>
+          <span id="validationMsg"></span>
+        </div>
+      </div>
+
+      <!-- ===== Step 2: Preview & Guest List ===== -->
+      <div id="step2" class="hidden-section space-y-6 page-transition">
+
+        <!-- Variation Selector -->
+        <div class="card-elevated rounded-2xl p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <i class="fas fa-palette text-primary text-sm"></i>
+            </div>
+            <h3 class="text-xl font-elegant font-semibold text-gray-800">Choose Your Style</h3>
+          </div>
+          <div class="grid md:grid-cols-3 gap-4" id="variationContainer"></div>
+        </div>
+
+        <!-- Gallery Upload -->
+        <div class="card-elevated rounded-2xl p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <i class="fas fa-images text-primary text-sm"></i>
+            </div>
+            <h3 class="text-xl font-elegant font-semibold text-gray-800">Gallery Photos <span class="text-gray-400 text-sm font-normal">(optional)</span></h3>
+          </div>
+          <p class="text-sm text-gray-500 mb-3">Click a cell to upload a photo. They will appear in the gallery section.</p>
+          <div class="grid grid-cols-3 gap-3">
+            <div onclick="triggerUpload('galleryInput0')" id="galleryCell0" class="gallery-cell bg-gradient-to-br from-primary/5 to-secondary/5"><i class="fas fa-plus text-primary/20 text-lg"></i></div>
+            <div onclick="triggerUpload('galleryInput1')" id="galleryCell1" class="gallery-cell bg-gradient-to-br from-secondary/5 to-primary/5"><i class="fas fa-plus text-secondary/20 text-lg"></i></div>
+            <div onclick="triggerUpload('galleryInput2')" id="galleryCell2" class="gallery-cell bg-gradient-to-br from-primary/5 to-secondary/5"><i class="fas fa-plus text-primary/20 text-lg"></i></div>
+            <div onclick="triggerUpload('galleryInput3')" id="galleryCell3" class="gallery-cell bg-gradient-to-br from-secondary/5 to-primary/5"><i class="fas fa-plus text-secondary/20 text-lg"></i></div>
+            <div onclick="triggerUpload('galleryInput4')" id="galleryCell4" class="gallery-cell bg-gradient-to-br from-primary/5 to-secondary/5"><i class="fas fa-plus text-primary/20 text-lg"></i></div>
+            <div onclick="triggerUpload('galleryInput5')" id="galleryCell5" class="gallery-cell bg-gradient-to-br from-secondary/5 to-primary/5"><i class="fas fa-plus text-secondary/20 text-lg"></i></div>
+          </div>
+        </div>
+
+        <!-- Guest List -->
+        <div class="card-elevated rounded-2xl p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <i class="fas fa-users text-primary text-sm"></i>
+            </div>
+            <h3 class="text-xl font-elegant font-semibold text-gray-800">Guest List</h3>
+          </div>
+          <p class="text-sm text-gray-500 mb-3">Enter one name per line. Each guest receives a personalized link.</p>
+          <textarea id="guestList" rows="6" placeholder="Mr. Ahmad Santoso&#10;Mrs. Siti Nurhaliza&#10;Mr. Budi Pratama&#10;Ms. Dewi Lestari" class="form-input w-full px-4 py-3 rounded-xl text-sm font-mono resize-none"></textarea>
+          <p class="text-xs text-gray-400 mt-2" id="guestCount">0 guests</p>
+        </div>
+
+        <!-- Preview -->
+        <div class="card-elevated rounded-2xl p-6 md:p-8">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <i class="fas fa-eye text-primary text-sm"></i>
+            </div>
+            <h3 class="text-xl font-elegant font-semibold text-gray-800">Preview</h3>
+          </div>
+          <div id="previewContainer" class="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center text-gray-300">
+            <i class="fas fa-image text-3xl mb-2"></i>
+            <p class="text-sm">Select a style above to see a preview</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3">
+          <button onclick="goToStep1()" class="btn-outline flex-1 py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+            <i class="fas fa-arrow-left text-xs"></i> Back
+          </button>
+          <button onclick="publishInvitation()" class="btn-primary flex-1 py-3.5 rounded-xl text-sm flex items-center justify-center gap-2">
+            <i class="fas fa-paper-plane text-xs"></i> Publish Invitation
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ==================== SUCCESS PAGE (LINKS) ==================== -->
+  <div id="successPage" class="hidden-section page-transition">
+    <div class="min-h-screen py-12 px-5">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-10 animate-fade-in-up">
+          <div class="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-5">
+            <i class="fas fa-check text-3xl text-emerald-600"></i>
+          </div>
+          <h1 class="text-3xl md:text-4xl font-elegant text-gray-800 mb-2">Invitation Published!</h1>
+          <p class="text-gray-500 text-sm">Your invitation is live. Share the personalized links below.</p>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-6 md:p-8 mb-6 animate-fade-in-up delay-200">
+          <h2 class="text-lg font-elegant font-semibold text-gray-800 mb-4">Main Invitation Link</h2>
+          <div class="flex gap-2">
+            <input type="text" id="mainLink" readonly class="form-input flex-1 px-4 py-3 rounded-xl text-xs bg-gray-50 font-mono"/>
+            <button onclick="copyToClipboard('mainLink')" class="btn-primary px-5 py-3 rounded-xl text-sm" title="Copy link">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-elevated rounded-2xl p-6 md:p-8 animate-fade-in-up delay-300">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-elegant font-semibold text-gray-800">Personalized Guest Links</h2>
+            <span class="text-xs font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full" id="totalGuests">0 guests</span>
+          </div>
+          <div class="space-y-2.5 max-h-80 overflow-y-auto pr-1" id="guestLinksContainer"></div>
+        </div>
+
+        <div class="mt-8 flex gap-3 justify-center animate-fade-in-up delay-400">
+          <button onclick="window.print()" class="px-5 py-3 bg-gray-800 text-white rounded-xl text-sm font-medium hover:bg-gray-900 transition flex items-center gap-2">
+            <i class="fas fa-print text-xs"></i> Print Links
+          </button>
+          <button onclick="location.reload()" class="btn-outline px-5 py-3 rounded-xl text-sm flex items-center gap-2">
+            <i class="fas fa-plus text-xs"></i> Create New
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== INVITATION PAGE (GUEST VIEW) ==================== -->
+  <div id="invitationPage" class="hidden-section">
+
+    <!-- Opening Page (Cover) -->
+    <div id="openingPage" class="min-h-screen flex flex-col items-center justify-center p-6 text-center invitation-bg pattern-overlay relative overflow-hidden">
+      <svg class="deco-corner-tl" viewBox="0 0 120 120" fill="none"><path d="M0 0 C60 0, 120 60, 120 120 L100 120 C100 70, 50 0, 0 0Z" fill="currentColor" class="text-primary"/></svg>
+      <svg class="deco-corner-br" viewBox="0 0 120 120" fill="none"><path d="M0 0 C60 0, 120 60, 120 120 L100 120 C100 70, 50 0, 0 0Z" fill="currentColor" class="text-primary"/></svg>
+
+      <div class="relative z-10">
+        <div class="w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-to-br from-primary-light to-primary flex items-center justify-center shadow-2xl animate-float mx-auto mb-8">
+          <i class="fas fa-heart text-white text-3xl md:text-4xl"></i>
+        </div>
+        <p class="text-primary font-semibold tracking-[0.3em] text-[11px] uppercase mb-4 animate-fade-in-up" id="labelYoureInvited">You're Invited</p>
+        <h1 class="text-5xl md:text-7xl font-script text-gray-800 animate-fade-in-up delay-100" id="openingHeadline">John & Jane</h1>
+        <div class="ornament-divider my-6 animate-fade-in-up delay-200"><i class="fas fa-diamond text-primary/30 text-[8px]"></i></div>
+        <div class="animate-fade-in-up delay-300">
+          <p class="text-gray-400 text-xs uppercase tracking-widest mb-1" id="labelDear">Dear</p>
+          <p class="text-xl md:text-2xl font-elegant font-semibold text-gray-700" id="openingGuestName">Guest Name</p>
+        </div>
+        <button onclick="openInvitation()" class="mt-10 px-8 py-3.5 btn-primary rounded-full text-sm flex items-center gap-2 mx-auto animate-fade-in-up delay-400">
+          <i class="fas fa-envelope-open text-xs"></i> Open Invitation
+        </button>
+        <p class="text-[10px] text-gray-400 mt-8 tracking-wider animate-fade-in-up delay-500">AI-Powered Invitation</p>
+      </div>
+    </div>
+
+    <!-- Main Invitation Content -->
+    <div id="mainInvitation" class="hidden-section invitation-bg">
+
+      <!-- Floating Controls -->
+      <button onclick="toggleMusic()" class="fixed top-4 right-4 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all" title="Toggle music">
+        <i class="fas fa-volume-up text-primary text-sm" id="musicIcon"></i>
+      </button>
+      <button onclick="shareInvitation()" class="fixed top-4 left-4 z-50 w-10 h-10 bg-white/90 backdrop-blur rounded-full shadow-lg flex items-center justify-center hover:shadow-xl transition-all" title="Share invitation">
+        <i class="fas fa-share-nodes text-primary text-sm"></i>
+      </button>
+
+      <!-- ===== Hero Section ===== -->
+      <section class="inv-section min-h-screen flex flex-col items-center justify-center p-6 text-center relative pattern-overlay">
+        <svg class="deco-corner-tl animate-ornament" viewBox="0 0 120 120" fill="none"><path d="M0 0 C60 0, 120 60, 120 120 L100 120 C100 70, 50 0, 0 0Z" fill="currentColor" class="text-primary"/></svg>
+        <svg class="deco-corner-br animate-ornament" viewBox="0 0 120 120" fill="none"><path d="M0 0 C60 0, 120 60, 120 120 L100 120 C100 70, 50 0, 0 0Z" fill="currentColor" class="text-primary"/></svg>
+        <div class="relative z-10 reveal">
+          <p class="text-primary font-semibold tracking-[0.3em] text-[11px] uppercase mb-6" id="labelEventLabel" contenteditable="true">The Wedding Of</p>
+          <h1 class="font-script text-gray-800 leading-tight" style="font-size:var(--hero-name-size)" id="heroName1" contenteditable="true">John</h1>
+          <p class="text-3xl md:text-4xl text-primary/60 font-script my-1" contenteditable="true">&</p>
+          <h1 class="font-script text-gray-800 leading-tight" style="font-size:var(--hero-name-size)" id="heroName2" contenteditable="true">Jane</h1>
+          <div class="ornament-divider my-8"><i class="fas fa-diamond text-primary/30 text-[8px]"></i></div>
+          <div class="max-w-md mx-auto">
+            <p class="text-gray-500 text-sm mb-3" contenteditable="true">Peace be upon you</p>
+            <p class="text-gray-600 leading-relaxed text-sm md:text-base" contenteditable="true" id="heroSubheadline">
+              With immense joy and gratitude, we invite you to celebrate the beginning of our new journey together.
+            </p>
+          </div>
+        </div>
+        <div class="absolute bottom-10 animate-chevron"><i class="fas fa-chevron-down text-primary/40 text-lg"></i></div>
+      </section>
+
+      <!-- ===== Verse / Quote ===== -->
+      <section class="inv-section py-16 px-6 bg-white/60 text-center" id="quranSection">
+        <div class="max-w-2xl mx-auto reveal">
+          <i class="fas fa-quote-left text-primary/15 text-4xl mb-4"></i>
+          <p class="text-xl md:text-2xl font-arabic text-gray-700 leading-loose" contenteditable="true">
+            And of everything We have created pairs, that you may remember.
+          </p>
+          <p class="text-gray-500 italic text-sm mt-4" contenteditable="true">"And We created you in pairs."</p>
+          <p class="text-primary font-medium text-xs mt-2 tracking-wider" contenteditable="true">(Quran 51:49)</p>
+        </div>
+      </section>
+
+      <!-- ===== Couple Section ===== -->
+      <section class="inv-section py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+          <div class="grid md:grid-cols-2 gap-10 md:gap-16">
+            <!-- Groom -->
+            <div class="text-center reveal">
+              <div class="photo-frame mx-auto mb-6">
+                <div class="photo-frame-inner" id="groomPhotoDisplay">
+                  <i class="fas fa-user text-5xl text-primary/40"></i>
+                </div>
+              </div>
+              <h3 class="text-xl md:text-2xl font-elegant font-semibold text-gray-800 mb-2" contenteditable="true" id="groomName">The Groom</h3>
+              <div class="ornament-divider my-3"><i class="fas fa-diamond text-primary/20 text-[6px]"></i></div>
+              <p class="text-gray-500 text-sm" contenteditable="true">Son of</p>
+              <p class="text-gray-700 font-medium text-sm" contenteditable="true">Mr. & Mrs. Smith</p>
+            </div>
+            <!-- Bride -->
+            <div class="text-center reveal delay-200">
+              <div class="photo-frame bride mx-auto mb-6">
+                <div class="photo-frame-inner" id="bridePhotoDisplay">
+                  <i class="fas fa-user text-5xl text-secondary/40"></i>
+                </div>
+              </div>
+              <h3 class="text-xl md:text-2xl font-elegant font-semibold text-gray-800 mb-2" contenteditable="true" id="brideName">The Bride</h3>
+              <div class="ornament-divider my-3"><i class="fas fa-diamond text-secondary/20 text-[6px]"></i></div>
+              <p class="text-gray-500 text-sm" contenteditable="true">Daughter of</p>
+              <p class="text-gray-700 font-medium text-sm" contenteditable="true">Mr. & Mrs. Johnson</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Event Details ===== -->
+      <section class="inv-section py-20 px-6 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 text-center relative pattern-overlay">
+        <div class="relative z-10 max-w-3xl mx-auto reveal">
+          <p class="text-primary font-semibold tracking-[0.25em] text-[11px] uppercase mb-3" id="labelSaveTheDate">Save The Date</p>
+          <h2 class="text-3xl md:text-4xl font-elegant font-semibold text-gray-800 mb-10" contenteditable="true" id="eventTitle">Wedding Ceremony</h2>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div class="card-elevated rounded-2xl p-6 text-center">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-calendar-days text-primary text-lg"></i>
+              </div>
+              <p class="text-lg font-elegant font-semibold text-gray-800" id="eventDate" contenteditable="true">Saturday, July 5, 2025</p>
+              <p class="text-gray-500 text-sm mt-1" id="eventTime" contenteditable="true">10:00 AM - End</p>
+            </div>
+            <div class="card-elevated rounded-2xl p-6 text-center">
+              <div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-location-dot text-secondary text-lg"></i>
+              </div>
+              <p class="font-elegant font-semibold text-gray-800" id="eventVenue" contenteditable="true">Grand Ballroom Hotel</p>
+              <p class="text-gray-500 text-sm mt-1" id="eventAddress" contenteditable="true">123 Main Street, City</p>
+            </div>
+          </div>
+          <div class="card-elevated rounded-2xl p-5 mt-5 inline-flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <i class="fas fa-shirt text-primary text-sm"></i>
+            </div>
+            <div class="text-left">
+              <p class="text-[10px] text-gray-400 uppercase tracking-wider font-semibold" id="labelDressCode">Dress Code</p>
+              <p class="text-sm font-medium text-gray-700" id="eventDressCode" contenteditable="true">Formal Attire</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap justify-center gap-3 mt-8">
+            <a id="mapsButton" href="#" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-full text-sm font-medium hover:bg-emerald-700 transition shadow-md">
+              <i class="fas fa-map-location-dot text-xs"></i> Open Maps
+            </a>
+            <button onclick="addToCalendar()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-full text-sm font-medium hover:bg-blue-700 transition shadow-md">
+              <i class="fas fa-calendar-plus text-xs"></i> Add to Calendar
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Countdown ===== -->
+      <section class="inv-section py-20 px-6 text-center">
+        <div class="max-w-2xl mx-auto reveal">
+          <p class="text-primary font-semibold tracking-[0.25em] text-[11px] uppercase mb-3" id="labelCountdown">Counting Down</p>
+          <h3 class="text-2xl md:text-3xl font-elegant font-semibold text-gray-800 mb-10" contenteditable="true" id="labelCountdownTitle">Until The Big Day</h3>
+          <div class="grid grid-cols-4 gap-3 md:gap-5">
+            <div class="countdown-item rounded-2xl p-4 md:p-6 shadow-md">
+              <p class="text-2xl md:text-4xl font-bold number" id="countdownDays">00</p>
+              <p class="text-gray-400 text-[10px] md:text-xs font-semibold uppercase tracking-wider mt-1" id="labelDays" contenteditable="true">Days</p>
+            </div>
+            <div class="countdown-item rounded-2xl p-4 md:p-6 shadow-md">
+              <p class="text-2xl md:text-4xl font-bold number" id="countdownHours">00</p>
+              <p class="text-gray-400 text-[10px] md:text-xs font-semibold uppercase tracking-wider mt-1" id="labelHours" contenteditable="true">Hours</p>
+            </div>
+            <div class="countdown-item rounded-2xl p-4 md:p-6 shadow-md">
+              <p class="text-2xl md:text-4xl font-bold number" id="countdownMinutes">00</p>
+              <p class="text-gray-400 text-[10px] md:text-xs font-semibold uppercase tracking-wider mt-1" id="labelMins" contenteditable="true">Mins</p>
+            </div>
+            <div class="countdown-item rounded-2xl p-4 md:p-6 shadow-md">
+              <p class="text-2xl md:text-4xl font-bold number" id="countdownSeconds">00</p>
+              <p class="text-gray-400 text-[10px] md:text-xs font-semibold uppercase tracking-wider mt-1" id="labelSecs" contenteditable="true">Secs</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Gallery ===== -->
+      <section class="inv-section py-20 px-6 bg-white/60 text-center">
+        <div class="max-w-4xl mx-auto reveal">
+          <p class="text-primary font-semibold tracking-[0.25em] text-[11px] uppercase mb-3" id="labelGallery">Our Moments</p>
+          <h2 class="text-2xl md:text-3xl font-elegant font-semibold text-gray-800 mb-10" contenteditable="true" id="labelGalleryTitle">Gallery</h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div class="gallery-cell bg-gradient-to-br from-primary/5 to-secondary/5" id="galleryDisplay0"><i class="fas fa-image text-2xl text-primary/20"></i></div>
+            <div class="gallery-cell bg-gradient-to-br from-secondary/5 to-primary/5" id="galleryDisplay1"><i class="fas fa-image text-2xl text-secondary/20"></i></div>
+            <div class="gallery-cell bg-gradient-to-br from-primary/5 to-secondary/5" id="galleryDisplay2"><i class="fas fa-image text-2xl text-primary/20"></i></div>
+            <div class="gallery-cell bg-gradient-to-br from-secondary/5 to-primary/5 hidden md:flex" id="galleryDisplay3"><i class="fas fa-image text-2xl text-secondary/20"></i></div>
+            <div class="gallery-cell bg-gradient-to-br from-primary/5 to-secondary/5 hidden md:flex" id="galleryDisplay4"><i class="fas fa-image text-2xl text-primary/20"></i></div>
+            <div class="gallery-cell bg-gradient-to-br from-secondary/5 to-primary/5 hidden md:flex" id="galleryDisplay5"><i class="fas fa-image text-2xl text-secondary/20"></i></div>
+          </div>
+          <p class="text-xs text-gray-400 mt-4" id="labelGalleryPlaceholder">Upload your photos to personalize this section</p>
+        </div>
+      </section>
+
+      <!-- ===== Gift Section ===== -->
+      <section class="inv-section py-20 px-6 text-center" id="giftSection">
+        <div class="max-w-md mx-auto reveal">
+          <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+            <i class="fas fa-gift text-primary text-2xl"></i>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-elegant font-semibold text-gray-800 mb-2" contenteditable="true" id="labelGiftTitle">Wedding Gift</h2>
+          <p class="text-gray-500 text-sm mb-8" contenteditable="true">Your presence is the greatest gift. However, if you wish to honor us with a gift, you may use the details below.</p>
+          <div class="card-elevated rounded-2xl p-6 space-y-4">
+            <p class="font-semibold text-gray-700 text-sm" contenteditable="true">Bank Account</p>
+            <div class="flex items-center justify-center gap-2">
+              <p class="text-xl font-bold text-primary font-mono tracking-wider" contenteditable="true" id="accountNumber">1234567890</p>
+              <button onclick="copyAccountNumber()" class="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center transition" title="Copy">
+                <i class="fas fa-copy text-gray-400 text-xs"></i>
+              </button>
+            </div>
+            <p class="text-gray-500 text-xs" contenteditable="true">Account Holder Name</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== RSVP Section ===== -->
+      <section class="inv-section py-20 px-6 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 relative pattern-overlay">
+        <div class="max-w-lg mx-auto relative z-10 reveal">
+          <div class="card-elevated rounded-3xl p-6 md:p-8">
+            <div class="text-center mb-6">
+              <div class="w-14 h-14 rounded-2xl bg-secondary/10 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-envelope text-secondary text-xl"></i>
+              </div>
+              <h2 class="text-2xl font-elegant font-semibold text-gray-800" id="labelRsvpTitle">RSVP & Wishes</h2>
+              <p class="text-gray-500 text-sm mt-1" id="labelRsvpSubtitle">Confirm attendance and send your wishes</p>
+            </div>
+            <form onsubmit="submitRSVP(event)" class="space-y-3">
+              <input type="text" id="rsvpName" placeholder="Your name" required class="form-input w-full px-4 py-3 rounded-xl text-sm"/>
+              <select id="rsvpStatus" class="form-input w-full px-4 py-3 rounded-xl text-sm">
+                <option value="attending">Will Attend</option>
+                <option value="not-attending">Cannot Attend</option>
+                <option value="maybe">Maybe</option>
+              </select>
+              <textarea id="rsvpMessage" placeholder="Write your wishes..." rows="3" class="form-input w-full px-4 py-3 rounded-xl text-sm resize-none"></textarea>
+              <button type="submit" class="w-full py-3.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary to-secondary shadow-md hover:shadow-lg transition-all">
+                Send RSVP
+              </button>
+            </form>
+            <div id="wishesContainer" class="mt-6 space-y-3 max-h-60 overflow-y-auto hidden">
+              <div class="ornament-divider my-2"><i class="fas fa-diamond text-primary/20 text-[6px]"></i></div>
+              <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider text-center">Recent Wishes</p>
+              <div id="wishesList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Closing ===== -->
+      <section class="inv-section py-24 px-6 text-center relative pattern-overlay">
+        <svg class="deco-corner-tl animate-ornament" viewBox="0 0 120 120" fill="none"><path d="M0 0 C60 0, 120 60, 120 120 L100 120 C100 70, 50 0, 0 0Z" fill="currentColor" class="text-primary"/></svg>
+        <svg class="deco-corner-br animate-ornament" viewBox="0 0 120 120" fill="none"><path d="M0 0 C60 0, 120 60, 120 120 L100 120 C100 70, 50 0, 0 0Z" fill="currentColor" class="text-primary"/></svg>
+        <div class="relative z-10 max-w-lg mx-auto reveal">
+          <p class="text-gray-600 leading-relaxed text-sm" contenteditable="true">
+            It would be our greatest joy to have you celebrate this special moment with us. Your presence and blessings mean the world.
+          </p>
+          <p class="text-gray-600 mt-4 text-sm" contenteditable="true">With love and gratitude,</p>
+          <h2 class="text-5xl md:text-6xl font-script text-gray-800 mt-6" id="closingNames" contenteditable="true">John & Jane</h2>
+          <div class="ornament-divider my-8"><i class="fas fa-heart text-primary/30 text-xs"></i></div>
+          <button onclick="shareInvitation()" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-full text-sm font-medium hover:bg-emerald-700 transition shadow-md">
+            <i class="fas fa-share-nodes text-xs"></i> Share Invitation
+          </button>
+          <p class="text-[10px] text-gray-400 mt-6 tracking-wider">Created with AI Invitation Generator</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+
+  <!-- ===== External Scripts ===== -->
+  <script src="invitationData.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
